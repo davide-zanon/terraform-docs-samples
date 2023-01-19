@@ -1,5 +1,5 @@
 /**
- * Copyright 2022 Google LLC
+ * Copyright 2023 Google LLC
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -14,14 +14,23 @@
  * limitations under the License.
  */
 
-# [START compute_reservation_create_local_reservation]
+# [START compute_reservation_create_specific_projects_reservation_instance_template]
 
-resource "google_compute_reservation" "gce_reservation_local" {
-  name = "gce-reservation-local"
-  zone = "us-central1-c"
+resource "google_compute_reservation" "default" {
+  name = "gce-reservation-specific-projects"
+  zone = "us-central1-a"
 
   share_settings {
-    share_type = "LOCAL"
+    share_type = "SPECIFIC_PROJECTS"
+
+    project_map {
+      {
+        id = "project-1"
+      }
+      {
+        id = "project-2"
+      }
+    }
   }
 
   specific_reservation {
@@ -30,6 +39,12 @@ resource "google_compute_reservation" "gce_reservation_local" {
       machine_type = "n2-standard-2"
     }
   }
+
+  /**
+   * To let VMs with affinity for any reservation consume this reservation, omit
+   * the specific_reservation_required field (default) or set it to false.
+   */
+  specific_reservation_required = false
 }
 
-# [END compute_reservation_create_local_reservation]
+# [END compute_reservation_create_specific_projects_reservation_instance_template]
